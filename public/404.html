@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Restaurante | Redirect</title>
+    <script>
+      const path = window.location.pathname;
+      const segments = path.split("/").filter(Boolean);
+      const repo = segments.length > 0 ? "/" + segments[0] + "/" : "/";
+      window.location.replace(repo);
+    </script>
+  </head>
+  <body></body>
+  </html>
