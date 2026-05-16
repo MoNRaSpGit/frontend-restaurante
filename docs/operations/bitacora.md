@@ -30,3 +30,39 @@ Incluye:
 - service worker con `autoUpdate`
 - assets publicos para iconos
 - `deploy` preparado para subir tambien archivos ocultos al branch `gh-pages`
+
+## 2026-05-16 - Primer simulador operativo del restaurante
+
+Se reemplaza la landing inicial por una primera version del flujo de trabajo diario del local.
+
+Incluye:
+
+- panel del jefe para tomar pedidos que hoy llegan por WhatsApp
+- busqueda de cliente existente o carga en el momento
+- seleccion de productos por `cocina afuera` y `cocina adentro`
+- envio de comanda al circuito correcto
+- vistas separadas para ambas cocinas
+- cambio de estado por click `pendiente -> preparacion -> lista`
+- asignacion manual a `Repartidor A` o `Repartidor B`
+- vista individual de reparto con cambio de estado del pedido
+- seccion de movimientos con entradas positivas y salidas negativas
+- ajuste visual hacia una interfaz mas sobria, oscura y minimalista
+
+Objetivo:
+
+- validar con el dueno si la operativa real queda bien representada antes de conectar backend, tiempo real real y web publica
+
+## 2026-05-16 - Refactor por capas y ajuste del panel del jefe
+
+Se ordena el modulo para no dejar la experiencia operativa en una sola pagina grande.
+
+Incluye:
+
+- separacion de `types`, `data`, `hooks`, `components`, `lib` y `styles`
+- `global.css` reducido a base realmente global
+- estilos del modulo movidos a `features/restaurante/styles`
+- ajuste visual especifico de los inputs de `Buscar cliente` y del formulario del jefe
+
+Objetivo:
+
+- dejar una base mantenible para seguir creciendo sin mezclar logica, UI y estilos en un mismo archivo

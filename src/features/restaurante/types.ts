@@ -1,0 +1,64 @@
+export type ViewKey = "jefe" | "cocina-afuera" | "cocina-adentro" | "repartidor-a" | "repartidor-b";
+export type KitchenKey = "afuera" | "adentro";
+export type KitchenStatus = "pendiente" | "preparacion" | "lista";
+export type DeliveryStatus = "sin-asignar" | "asignado" | "en-camino" | "entregado";
+export type RiderPresence = "local" | "calle";
+
+export type Customer = {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+};
+
+export type MenuItem = {
+  id: string;
+  name: string;
+  price: number;
+  kitchen: KitchenKey;
+};
+
+export type DraftOrderItem = {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  kitchen: KitchenKey;
+};
+
+export type OrderKitchenItem = DraftOrderItem & {
+  status: KitchenStatus;
+};
+
+export type Order = {
+  id: string;
+  customerId: string;
+  customerName: string;
+  customerPhone: string;
+  address: string;
+  items: OrderKitchenItem[];
+  riderId: string | null;
+  deliveryStatus: DeliveryStatus;
+  createdAtLabel: string;
+  total: number;
+};
+
+export type Rider = {
+  id: string;
+  name: string;
+  presence: RiderPresence;
+};
+
+export type Movement = {
+  id: string;
+  label: string;
+  amount: number;
+  createdAtLabel: string;
+  detail: string;
+  orderId?: string;
+};
+
+export type KitchenOrderGroup = {
+  order: Order;
+  items: OrderKitchenItem[];
+};
