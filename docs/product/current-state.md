@@ -1,6 +1,6 @@
 # Estado actual del frontend
 
-Fecha de actualizacion: 2026-05-22
+Fecha de actualizacion: 2026-05-29
 
 ## Estado del corte
 
@@ -32,13 +32,19 @@ Hoy incluye:
   - `Hamburguesas`
   - `Milanesas`
   - `Bebidas`
+- catalogo mock actualizado con `Hamburguesa BBQ` a `$330`
 - derivacion automatica por sector:
   - hamburguesas -> `Carrito`
   - milanesas -> `Cocina`
   - bebidas -> `Mostrador`
 - control general por pedido completo
+- estado por producto dentro de `Control`: `Pendiente`, `Preparando` y `Listo`
+- boton general neutral mientras el pedido sigue en cocina
 - asignacion manual a delivery cuando el pedido queda listo
-- vistas separadas para `Delivery A` y `Delivery B`
+- asignacion de delivery mostrando nombres operativos `Juan` y `Maria`
+- vistas separadas para `Deli Juan` y `Deli Maria`
+- tarjetas de delivery con numero de pedido, cliente, direccion y productos del pedido
+- listas de `Cocina` y `Carrito` que ocultan productos cuando quedan listos
 - movimientos con resumen de venta diaria y ganancia estimada
 - configuracion lista para deploy en GitHub Pages
 - soporte `PWA` instalable

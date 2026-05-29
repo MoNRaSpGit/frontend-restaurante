@@ -1,6 +1,23 @@
 # Bitacora del modulo
 
-Fecha de actualizacion: 2026-05-22
+Fecha de actualizacion: 2026-05-29
+
+## 2026-05-29 - Documentacion del simulador operativo actualizado
+
+Se alinea la documentacion del modulo con el estado realmente publicado del simulador.
+
+Incluye:
+
+- navegacion paginada actual con `Control` siempre visible
+- catalogo mock con `Hamburguesa BBQ`
+- lectura de estado por producto dentro de `Control`
+- nombres operativos de delivery como `Deli Juan` y `Deli Maria`
+- comportamiento de `Cocina` y `Carrito` ocultando productos listos
+
+Objetivo:
+
+- dejar la documentacion consistente con el prototipo publicado
+- evitar que el proximo cambio arranque con contexto viejo
 
 ## 2026-05-29 - Navegacion paginada de accesos operativos
 
