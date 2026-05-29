@@ -9,17 +9,17 @@ import {
   buildMovementDetail,
   findCustomerByTerm,
   groupOrdersByKitchen,
+  resolveKitchenByCategory,
   nextDeliveryStatus,
   nextKitchenStatus
 } from "../lib/restaurantUtils";
 import type {
   Customer,
   DraftOrderItem,
-  KitchenKey,
+  MenuCategoryKey,
   Movement,
   Order,
   Rider,
-  RiderPresence,
   ViewKey
 } from "../types";
 
@@ -32,7 +32,6 @@ export function useRestaurantOperations() {
   const [activeView, setActiveView] = useState<ViewKey>("jefe");
   const [customers, setCustomers] = useState<Customer[]>(existingCustomers);
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [riders, setRiders] = useState<Rider[]>(initialRiders);
   const [movements, setMovements] = useState<Movement[]>(initialMovements);
   const [expandedMovementId, setExpandedMovementId] = useState<string | null>(null);
 
@@ -45,6 +44,34 @@ export function useRestaurantOperations() {
 
   const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? null;
   const matchedCustomer = findCustomerByTerm(customers, customerLookup);
+  const riders = useMemo<Rider[]>(
+    () =>
+      initialRiders.map((rider) => {
+        const riderOrders = orders.filter(
+          (order) => order.riderId === rider.id && order.deliveryStatus !== "entregado"
+        );
+
+        if (riderOrders.some((order) => order.deliveryStatus === "en-camino")) {
+          return {
+            ...rider,
+            presence: "calle"
+          };
+        }
+
+        if (riderOrders.some((order) => order.deliveryStatus === "asignado")) {
+          return {
+            ...rider,
+            presence: "local"
+          };
+        }
+
+        return {
+          ...rider,
+          presence: "regresando"
+        };
+      }),
+    [orders]
+  );
 
   const summary = useMemo(() => {
     const pendingOrdersCount = orders.filter((order) => order.deliveryStatus !== "entregado").length;
@@ -62,8 +89,9 @@ export function useRestaurantOperations() {
 
   const kitchenViews = useMemo(
     () => ({
-      outsideKitchenOrders: groupOrdersByKitchen(orders, "afuera"),
-      insideKitchenOrders: groupOrdersByKitchen(orders, "adentro")
+      cartOrders: groupOrdersByKitchen(orders.filter((order) => order.deliveryStatus !== "entregado"), "carrito"),
+      kitchenOrders: groupOrdersByKitchen(orders.filter((order) => order.deliveryStatus !== "entregado"), "cocina"),
+      counterOrders: groupOrdersByKitchen(orders.filter((order) => order.deliveryStatus !== "entregado"), "mostrador")
     }),
     [orders]
   );
@@ -91,9 +119,45 @@ export function useRestaurantOperations() {
     }
 
     setSelectedCustomerId(matchedCustomer.id);
+    setCustomerLookup("");
     setNewCustomerName(matchedCustomer.name);
     setNewCustomerPhone(matchedCustomer.phone);
     setNewCustomerAddress(matchedCustomer.address);
+  }
+
+  function selectCustomerById(customerId: string) {
+    const customer = customers.find((entry) => entry.id === customerId);
+    if (!customer) {
+      return;
+    }
+
+    setSelectedCustomerId(customer.id);
+    setCustomerLookup("");
+    setNewCustomerName(customer.name);
+    setNewCustomerPhone(customer.phone);
+    setNewCustomerAddress(customer.address);
+  }
+
+  function createQuickCustomer(name: string, phone: string) {
+    const normalizedName = name.trim();
+    if (!normalizedName) {
+      return null;
+    }
+
+    const customer: Customer = {
+      id: `c${customerSequenceRef.current++}`,
+      name: normalizedName,
+      phone: phone.trim(),
+      address: ""
+    };
+
+    setCustomers((currentCustomers) => [...currentCustomers, customer]);
+    setSelectedCustomerId(customer.id);
+    setCustomerLookup("");
+    setNewCustomerName(customer.name);
+    setNewCustomerPhone(customer.phone);
+    setNewCustomerAddress(customer.address);
+    return customer;
   }
 
   function setCustomerField(field: "name" | "phone" | "address", value: string) {
@@ -112,9 +176,9 @@ export function useRestaurantOperations() {
     setNewCustomerAddress(value);
   }
 
-  function addMenuItemToDraft(menuItem: { name: string; price: number; kitchen: KitchenKey }) {
+  function addMenuItemToDraft(menuItem: { name: string; price: number; category: MenuCategoryKey }) {
     setDraftItems((currentItems) => {
-      const existingItem = currentItems.find((item) => item.name === menuItem.name && item.kitchen === menuItem.kitchen);
+      const existingItem = currentItems.find((item) => item.name === menuItem.name);
       if (existingItem) {
         return currentItems.map((item) =>
           item.id === existingItem.id ? { ...item, quantity: item.quantity + 1 } : item
@@ -128,7 +192,8 @@ export function useRestaurantOperations() {
           name: menuItem.name,
           price: menuItem.price,
           quantity: 1,
-          kitchen: menuItem.kitchen
+          category: menuItem.category,
+          kitchen: resolveKitchenByCategory(menuItem.category)
         }
       ];
     });
@@ -156,7 +221,7 @@ export function useRestaurantOperations() {
       return selectedCustomer;
     }
 
-    if (!newCustomerName.trim() || !newCustomerPhone.trim() || !newCustomerAddress.trim()) {
+    if (!newCustomerName.trim()) {
       return null;
     }
 
@@ -197,7 +262,7 @@ export function useRestaurantOperations() {
       address: customer.address,
       items: draftItems.map((item) => ({
         ...item,
-        status: "pendiente"
+        status: item.kitchen === "mostrador" ? "lista" : "pendiente"
       })),
       riderId: null,
       deliveryStatus: "sin-asignar",
@@ -256,9 +321,6 @@ export function useRestaurantOperations() {
   }
 
   function advanceRiderOrder(orderId: string) {
-    let nextPresence: RiderPresence | null = null;
-    let targetRiderId: string | null = null;
-
     setOrders((currentOrders) =>
       currentOrders.map((order) => {
         if (order.id !== orderId || !order.riderId) {
@@ -266,29 +328,12 @@ export function useRestaurantOperations() {
         }
 
         const nextStatus = nextDeliveryStatus(order.deliveryStatus);
-        targetRiderId = order.riderId;
-        nextPresence = nextStatus === "en-camino" ? "calle" : nextStatus === "entregado" ? "local" : null;
-
         return {
           ...order,
           deliveryStatus: nextStatus
         };
       })
     );
-
-    if (targetRiderId && nextPresence) {
-      const resolvedPresence = nextPresence;
-      setRiders((currentRiders) =>
-        currentRiders.map((rider) =>
-          rider.id === targetRiderId
-            ? {
-                ...rider,
-                presence: resolvedPresence
-              }
-            : rider
-        )
-      );
-    }
   }
 
   return {
@@ -314,6 +359,8 @@ export function useRestaurantOperations() {
     riderViews,
     resetDraft,
     selectMatchedCustomer,
+    selectCustomerById,
+    createQuickCustomer,
     addMenuItemToDraft,
     changeDraftQuantity,
     submitOrder,

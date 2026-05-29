@@ -2,9 +2,12 @@ import type {
   Customer,
   DeliveryStatus,
   DraftOrderItem,
+  KitchenKey,
   KitchenOrderGroup,
   KitchenStatus,
-  Order
+  MenuCategoryKey,
+  Order,
+  RiderPresence
 } from "../types";
 
 export function formatCurrency(value: number) {
@@ -57,11 +60,35 @@ export function buildMovementDetail(items: DraftOrderItem[]) {
   return items.map((item) => `${item.name} x${item.quantity}`).join(", ");
 }
 
-export function groupOrdersByKitchen(orders: Order[], kitchen: "afuera" | "adentro"): KitchenOrderGroup[] {
+export function resolveKitchenByCategory(category: MenuCategoryKey): KitchenKey {
+  if (category === "hamburguesas") {
+    return "carrito";
+  }
+
+  if (category === "milanesas") {
+    return "cocina";
+  }
+
+  return "mostrador";
+}
+
+export function groupOrdersByKitchen(orders: Order[], kitchen: KitchenKey): KitchenOrderGroup[] {
   return orders
     .map((order) => ({
       order,
-      items: order.items.filter((item) => item.kitchen === kitchen)
+      items: order.items.filter((item) => item.kitchen === kitchen && item.status !== "lista")
     }))
     .filter((entry) => entry.items.length > 0);
+}
+
+export function getRiderPresenceUi(presence: RiderPresence) {
+  if (presence === "calle") {
+    return { label: "Repartiendo", icon: "🛵" };
+  }
+
+  if (presence === "regresando") {
+    return { label: "Regresando", icon: "↩" };
+  }
+
+  return { label: "En local", icon: "🏠" };
 }

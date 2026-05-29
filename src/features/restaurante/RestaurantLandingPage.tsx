@@ -1,9 +1,7 @@
 import "./styles/restaurant-ops.css";
 import { BossPanel } from "./components/BossPanel";
 import { KitchenView } from "./components/KitchenView";
-import { RestaurantHeader } from "./components/RestaurantHeader";
 import { RiderView } from "./components/RiderView";
-import { RoleTabs } from "./components/RoleTabs";
 import { useRestaurantOperations } from "./hooks/useRestaurantOperations";
 
 export function RestaurantLandingPage() {
@@ -11,38 +9,32 @@ export function RestaurantLandingPage() {
 
   const matchedCustomerLabel = operations.matchedCustomer
     ? `Encontrado: ${operations.matchedCustomer.name} - ${operations.matchedCustomer.address}`
-    : "Si no existe, lo agendas en los campos de abajo.";
-
-  const customerForm = {
-    name: operations.selectedCustomer?.name ?? operations.newCustomerName,
-    phone: operations.selectedCustomer?.phone ?? operations.newCustomerPhone,
-    address: operations.selectedCustomer?.address ?? operations.newCustomerAddress
-  };
+    : "Busca un cliente o crea uno nuevo.";
 
   return (
     <main className="restaurant-ops-page">
       <section className="ops-shell">
-        <RestaurantHeader summary={operations.summary} />
-        <RoleTabs activeView={operations.activeView} onChange={operations.setActiveView} />
-
         {operations.activeView === "jefe" ? (
           <BossPanel
             customerLookup={operations.customerLookup}
             onCustomerLookupChange={operations.setCustomerLookup}
+            customers={operations.customers}
             matchedCustomerLabel={matchedCustomerLabel}
-            customerForm={customerForm}
-            onCustomerFieldChange={operations.setCustomerField}
             draftItems={operations.draftItems}
             onSelectMatchedCustomer={operations.selectMatchedCustomer}
+            onSelectCustomerById={operations.selectCustomerById}
+            onCreateQuickCustomer={operations.createQuickCustomer}
             onAddMenuItem={operations.addMenuItemToDraft}
             onChangeDraftQuantity={operations.changeDraftQuantity}
             onResetDraft={operations.resetDraft}
             onSubmitOrder={operations.submitOrder}
-            outsideKitchenOrders={operations.kitchenViews.outsideKitchenOrders}
-            insideKitchenOrders={operations.kitchenViews.insideKitchenOrders}
+            cartOrders={operations.kitchenViews.cartOrders}
+            kitchenOrders={operations.kitchenViews.kitchenOrders}
             orders={operations.orders}
             riders={operations.riders}
             onAssignRider={operations.assignRider}
+            onAdvanceKitchenItem={operations.advanceKitchenItem}
+            onAdvanceRiderOrder={operations.advanceRiderOrder}
             movements={operations.movements}
             expandedMovementId={operations.expandedMovementId}
             onToggleMovement={(movementId) =>
@@ -53,18 +45,18 @@ export function RestaurantLandingPage() {
 
         {operations.activeView === "cocina-afuera" ? (
           <KitchenView
-            title="Cocina afuera"
-            subtitle="Hamburguesas, pizzas y fritos"
-            orders={operations.kitchenViews.outsideKitchenOrders}
+            title="Carrito"
+            subtitle="Preparaciones rapidas"
+            orders={operations.kitchenViews.cartOrders}
             onAdvanceItem={operations.advanceKitchenItem}
           />
         ) : null}
 
         {operations.activeView === "cocina-adentro" ? (
           <KitchenView
-            title="Cocina adentro"
-            subtitle="Platos internos y cocina clasica"
-            orders={operations.kitchenViews.insideKitchenOrders}
+            title="Cocina"
+            subtitle="Preparaciones de cocina"
+            orders={operations.kitchenViews.kitchenOrders}
             onAdvanceItem={operations.advanceKitchenItem}
           />
         ) : null}

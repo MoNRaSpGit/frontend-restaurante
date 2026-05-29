@@ -1,8 +1,9 @@
 export type ViewKey = "jefe" | "cocina-afuera" | "cocina-adentro" | "repartidor-a" | "repartidor-b";
-export type KitchenKey = "afuera" | "adentro";
+export type KitchenKey = "carrito" | "cocina" | "mostrador";
+export type MenuCategoryKey = "hamburguesas" | "milanesas" | "bebidas";
 export type KitchenStatus = "pendiente" | "preparacion" | "lista";
 export type DeliveryStatus = "sin-asignar" | "asignado" | "en-camino" | "entregado";
-export type RiderPresence = "local" | "calle";
+export type RiderPresence = "local" | "calle" | "regresando";
 
 export type Customer = {
   id: string;
@@ -15,7 +16,7 @@ export type MenuItem = {
   id: string;
   name: string;
   price: number;
-  kitchen: KitchenKey;
+  category: MenuCategoryKey;
 };
 
 export type DraftOrderItem = {
@@ -23,6 +24,7 @@ export type DraftOrderItem = {
   name: string;
   price: number;
   quantity: number;
+  category: MenuCategoryKey;
   kitchen: KitchenKey;
 };
 

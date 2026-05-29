@@ -1,35 +1,45 @@
-import type { Customer, KitchenKey, MenuItem, Movement, Order, Rider, ViewKey } from "../types";
+import type { Customer, KitchenKey, MenuCategoryKey, MenuItem, Movement, Order, Rider, ViewKey } from "../types";
 
 export const kitchenLabels: Record<KitchenKey, string> = {
-  afuera: "Cocina afuera",
-  adentro: "Cocina adentro"
+  carrito: "Carrito",
+  cocina: "Cocina",
+  mostrador: "Mostrador"
+};
+
+export const categoryLabels: Record<MenuCategoryKey, string> = {
+  hamburguesas: "Hamburguesas",
+  milanesas: "Milanesas",
+  bebidas: "Bebidas"
 };
 
 export const menuCatalog: MenuItem[] = [
-  { id: "m1", name: "Hamburguesa clasica", price: 420, kitchen: "afuera" },
-  { id: "m2", name: "Pizza muzzarella", price: 590, kitchen: "afuera" },
-  { id: "m3", name: "Papas fritas", price: 230, kitchen: "afuera" },
-  { id: "m4", name: "Milanesa al plato", price: 540, kitchen: "adentro" },
-  { id: "m5", name: "Pasta del dia", price: 480, kitchen: "adentro" },
-  { id: "m6", name: "Ensalada completa", price: 360, kitchen: "adentro" }
+  { id: "m1", name: "Hamburguesa clasica", price: 420, category: "hamburguesas" },
+  { id: "m2", name: "Hamburguesa BBQ", price: 330, category: "hamburguesas" },
+  { id: "m3", name: "Hamburguesa doble", price: 560, category: "hamburguesas" },
+  { id: "m4", name: "Milanesa clasica", price: 590, category: "milanesas" },
+  { id: "m5", name: "Milanesa napolitana", price: 640, category: "milanesas" },
+  { id: "m6", name: "Milanesa cheddar", price: 670, category: "milanesas" },
+  { id: "m7", name: "Refresco 600 ml", price: 140, category: "bebidas" },
+  { id: "m8", name: "Agua con gas", price: 120, category: "bebidas" },
+  { id: "m9", name: "Cerveza lata", price: 180, category: "bebidas" }
 ];
 
 export const existingCustomers: Customer[] = [
-  { id: "c1", name: "Lucia Pereira", phone: "099111222", address: "Rivera 1408" },
-  { id: "c2", name: "Matias Silva", phone: "098333444", address: "Bulevar Artigas 915" },
-  { id: "c3", name: "Sofia Cabrera", phone: "094555666", address: "Ellauri 221" }
+  { id: "c1", name: "Ramon", phone: "099111222", address: "Rivera 1408" },
+  { id: "c2", name: "Juan", phone: "098333444", address: "Bulevar Artigas 915" },
+  { id: "c3", name: "Maria", phone: "094555666", address: "Ellauri 221" }
 ];
 
 export const initialRiders: Rider[] = [
-  { id: "r1", name: "Repartidor A", presence: "local" },
-  { id: "r2", name: "Repartidor B", presence: "local" }
+  { id: "r1", name: "Delivery A", presence: "local" },
+  { id: "r2", name: "Delivery B", presence: "local" }
 ];
 
 export const initialOrders: Order[] = [
   {
     id: "P-101",
     customerId: "c1",
-    customerName: "Lucia Pereira",
+    customerName: "Ramon",
     customerPhone: "099111222",
     address: "Rivera 1408",
     items: [
@@ -38,51 +48,55 @@ export const initialOrders: Order[] = [
         name: "Hamburguesa clasica",
         price: 420,
         quantity: 2,
-        kitchen: "afuera",
-        status: "preparacion"
+        category: "hamburguesas",
+        kitchen: "carrito",
+        status: "lista"
       },
       {
         id: "oi-2",
-        name: "Papas fritas",
-        price: 230,
+        name: "Refresco 600 ml",
+        price: 140,
         quantity: 1,
-        kitchen: "afuera",
-        status: "pendiente"
+        category: "bebidas",
+        kitchen: "mostrador",
+        status: "lista"
       }
     ],
     riderId: "r1",
     deliveryStatus: "asignado",
     createdAtLabel: "12:08",
-    total: 1070
+    total: 980
   },
   {
     id: "P-102",
     customerId: "c2",
-    customerName: "Matias Silva",
+    customerName: "Juan",
     customerPhone: "098333444",
     address: "Bulevar Artigas 915",
     items: [
       {
         id: "oi-3",
-        name: "Milanesa al plato",
-        price: 540,
+        name: "Milanesa napolitana",
+        price: 640,
         quantity: 1,
-        kitchen: "adentro",
+        category: "milanesas",
+        kitchen: "cocina",
         status: "preparacion"
       },
       {
         id: "oi-4",
-        name: "Ensalada completa",
-        price: 360,
+        name: "Agua con gas",
+        price: 120,
         quantity: 1,
-        kitchen: "adentro",
+        category: "bebidas",
+        kitchen: "mostrador",
         status: "lista"
       }
     ],
     riderId: "r2",
     deliveryStatus: "en-camino",
     createdAtLabel: "12:11",
-    total: 900
+    total: 760
   }
 ];
 
@@ -90,9 +104,9 @@ export const initialMovements: Movement[] = [
   {
     id: "mv-1",
     label: "Venta pedido P-102",
-    amount: 900,
+    amount: 760,
     createdAtLabel: "12:11",
-    detail: "Milanesa al plato x1, Ensalada completa x1",
+    detail: "Milanesa napolitana x1, Agua con gas x1",
     orderId: "P-102"
   },
   {
@@ -105,17 +119,17 @@ export const initialMovements: Movement[] = [
   {
     id: "mv-3",
     label: "Venta pedido P-101",
-    amount: 1070,
+    amount: 980,
     createdAtLabel: "12:08",
-    detail: "Hamburguesa clasica x2, Papas fritas x1",
+    detail: "Hamburguesa clasica x2, Refresco 600 ml x1",
     orderId: "P-101"
   }
 ];
 
 export const roleTabs: Array<{ key: ViewKey; label: string }> = [
-  { key: "jefe", label: "Panel jefe" },
-  { key: "cocina-afuera", label: "Cocina afuera" },
+  { key: "jefe", label: "Panel de control" },
+  { key: "cocina-afuera", label: "Carrito" },
   { key: "cocina-adentro", label: "Cocina adentro" },
-  { key: "repartidor-a", label: "Repartidor A" },
-  { key: "repartidor-b", label: "Repartidor B" }
+  { key: "repartidor-a", label: "Delivery A" },
+  { key: "repartidor-b", label: "Delivery B" }
 ];

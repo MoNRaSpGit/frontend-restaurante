@@ -1,6 +1,6 @@
 # Restaurante Docs
 
-Fecha de actualizacion: 2026-05-16
+Fecha de actualizacion: 2026-05-22
 
 ## Objetivo
 
@@ -12,6 +12,7 @@ Su funcion es dejar claro:
 - cual es el estado visible actual de la UI
 - que alcance tiene este primer corte
 - que cambios finos se hagan en el frontend
+- como quedo el flujo guiado actual para celular
 
 ## Alcance
 
@@ -35,4 +36,3 @@ Eso vive en `backend/docs`.
 1. [Estado actual del frontend](./product/current-state.md)
 2. [Contexto funcional del producto](./product/product-context.md)
 3. [Bitacora del modulo](./operations/bitacora.md)
-

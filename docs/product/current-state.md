@@ -1,25 +1,49 @@
 # Estado actual del frontend
 
-Fecha de actualizacion: 2026-05-16
+Fecha de actualizacion: 2026-05-22
 
 ## Estado del corte
 
-`frontend-restaurante` ya no esta solo como landing. Hoy queda en estado de simulador operativo funcional.
+`frontend-restaurante` ya no esta solo como landing. Hoy queda como simulador operativo guiado y mobile-first.
 
 Hoy incluye:
 
-- panel jefe para ingresar pedidos manuales
-- busqueda o alta rapida de cliente
-- armado de comanda con productos separados por cocina
-- vista `Cocina afuera`
-- vista `Cocina adentro`
-- vista `Repartidor A`
-- vista `Repartidor B`
-- asignacion de pedidos a reparto
-- tabla de movimientos con detalle expandible
+- panel principal `Sistema de Pedidos`
+- navegacion paginada de a `3` accesos visibles por bloque
+- primer bloque: `Cliente`, `Pedido`, `Control`
+- segundo bloque: `Cocina`, `Carrito`, `Control`
+- tercer bloque: `Delivery B`, `Delivery A`, `Control`
+- cuarto bloque: `Movimientos`, `Cerrar sesion`, `Control`
+- flechas discretas para pasar de un bloque al otro sin mostrar toda la botonera junta
+- `Cerrar sesion` visible como placeholder sin accion real en este corte
+- flujo guiado por pestañas:
+  - `Cliente`
+  - `Pedido`
+  - `Control`
+  - `Cocina`
+  - `Carrito`
+  - `Delivery A`
+  - `Delivery B`
+  - `Movimientos`
+- busqueda de cliente
+- lista desplegable de clientes ya cargados
+- alta rapida de cliente desde modal
+- armado del pedido por categorias:
+  - `Hamburguesas`
+  - `Milanesas`
+  - `Bebidas`
+- derivacion automatica por sector:
+  - hamburguesas -> `Carrito`
+  - milanesas -> `Cocina`
+  - bebidas -> `Mostrador`
+- control general por pedido completo
+- asignacion manual a delivery cuando el pedido queda listo
+- vistas separadas para `Delivery A` y `Delivery B`
+- movimientos con resumen de venta diaria y ganancia estimada
 - configuracion lista para deploy en GitHub Pages
 - soporte `PWA` instalable
 - estructura interna separada por capas para evitar una pagina unica gigante
+- layout afinado para verse como app de celular
 
 ## Lo que todavia no incluye
 
@@ -30,11 +54,12 @@ Hoy incluye:
 - impresion real de comanda
 - socket o sincronizacion real multiusuario
 - web publica para pedidos del cliente final
+- multi-tenant real del SaaS
 
 ## Prioridad del corte
 
 Primero validar:
 
-- que el flujo operativo represente bien al negocio
-- que la division entre cocina afuera, cocina adentro y reparto sea clara
-- que el tablero del jefe permita ver cocina, reparto y caja sin friccion
+- que el flujo guiado represente bien la operativa del local
+- que la division entre `Carrito`, `Cocina` y `Delivery` sea clara
+- que el uso en celular sea suficientemente simple para tomar pedidos rapido
