@@ -1,6 +1,36 @@
 # Bitacora del modulo
 
-Fecha de actualizacion: 2026-05-29
+Fecha de actualizacion: 2026-05-30
+
+## 2026-05-30 - Movimientos confirma ventas al entregar
+
+Se ajusta la logica del simulador para que la venta no se registre al crear el pedido.
+
+Incluye:
+
+- el pedido nuevo ya no genera entrada inmediata en `Movimientos`
+- la venta se agrega cuando el deli marca el pedido como `entregado`
+- los mocks iniciales dejan de mostrar ventas de pedidos que todavia siguen activos
+
+Objetivo:
+
+- hacer mas realista la lectura de caja
+- reflejar la confirmacion de ingreso cuando el delivery cierra efectivamente la entrega
+
+## 2026-05-30 - Control muestra estado operativo del delivery
+
+Se ajusta la lectura de `Control` para que el delivery asignado no muestre solo el nombre.
+
+Incluye:
+
+- `Control` ahora muestra `Delivery: Juan - En local` o `Delivery: Juan - En viaje`
+- el estado se lee desde la accion real que hace el deli al avanzar su pedido
+- si no hay delivery asignado, sigue mostrando `Sin asignar`
+
+Objetivo:
+
+- darle al jefe una lectura mas clara de si el repartidor ya salio o sigue en el local
+- evitar mirar la vista del delivery solo para saber si esta en viaje
 
 ## 2026-05-29 - Documentacion del simulador operativo actualizado
 

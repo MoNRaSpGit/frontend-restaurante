@@ -1,6 +1,6 @@
 # Estado actual del frontend
 
-Fecha de actualizacion: 2026-05-29
+Fecha de actualizacion: 2026-05-30
 
 ## Estado del corte
 
@@ -39,11 +39,13 @@ Hoy incluye:
   - bebidas -> `Mostrador`
 - control general por pedido completo
 - estado por producto dentro de `Control`: `Pendiente`, `Preparando` y `Listo`
+- estado del delivery dentro de `Control`: `En local` o `En viaje` segun lo que avance el deli
 - boton general neutral mientras el pedido sigue en cocina
 - asignacion manual a delivery cuando el pedido queda listo
 - asignacion de delivery mostrando nombres operativos `Juan` y `Maria`
 - vistas separadas para `Deli Juan` y `Deli Maria`
 - tarjetas de delivery con numero de pedido, cliente, direccion y productos del pedido
+- `Movimientos` confirma la venta cuando el deli marca el pedido como entregado
 - listas de `Cocina` y `Carrito` que ocultan productos cuando quedan listos
 - movimientos con resumen de venta diaria y ganancia estimada
 - configuracion lista para deploy en GitHub Pages

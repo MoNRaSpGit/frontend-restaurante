@@ -381,9 +381,8 @@ export function BossPanel({
                 {activeOrders.length === 0 ? <div className="empty-state">No hay pedidos activos.</div> : null}
                 {activeOrders.map((order) => {
                   const controlStatus = getControlOrderStatus(order, order.items);
-                  const assignedRiderLabel = order.riderId
-                    ? assignRiderLabels[order.riderId] ?? order.riderId
-                    : "Sin asignar";
+                  const assignedRider = riders.find((rider) => rider.id === order.riderId);
+                  const assignedRiderLabel = getControlRiderLabel(assignedRider);
                   return (
                     <article key={order.id} className="mini-order-card">
                       <div className="mini-order-card-header">
@@ -675,7 +674,6 @@ function DeliveryPanel({
 
             <div className="delivery-meta">
               <span>Direccion: {order.address || "Sin direccion"}</span>
-              <span>Delivery: {rider?.name ?? "Sin asignar"}</span>
             </div>
 
             <div className="delivery-products">
@@ -785,4 +783,14 @@ function getDeliveryStatusClass(status: DeliveryStatus) {
   }
 
   return "status-chip neutral";
+}
+
+function getControlRiderLabel(rider?: Rider) {
+  if (!rider) {
+    return "Delivery: Sin asignar";
+  }
+
+  const riderName = assignRiderLabels[rider.id] ?? rider.name;
+  const riderPresenceLabel = rider.presence === "calle" ? "En viaje" : "En local";
+  return `Delivery: ${riderName} - ${riderPresenceLabel}`;
 }

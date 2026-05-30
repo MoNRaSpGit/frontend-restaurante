@@ -270,17 +270,7 @@ export function useRestaurantOperations() {
       total
     };
 
-    const movement: Movement = {
-      id: `mv-${movementSequenceRef.current++}`,
-      label: `Venta pedido ${orderId}`,
-      amount: total,
-      createdAtLabel,
-      detail: buildMovementDetail(draftItems),
-      orderId
-    };
-
     setOrders((currentOrders) => [order, ...currentOrders]);
-    setMovements((currentMovements) => [movement, ...currentMovements]);
     resetDraft();
   }
 
@@ -321,19 +311,49 @@ export function useRestaurantOperations() {
   }
 
   function advanceRiderOrder(orderId: string) {
-    setOrders((currentOrders) =>
-      currentOrders.map((order) => {
-        if (order.id !== orderId || !order.riderId) {
-          return order;
-        }
+    const targetOrder = orders.find((order) => order.id === orderId && order.riderId);
+    if (!targetOrder) {
+      return;
+    }
 
-        const nextStatus = nextDeliveryStatus(order.deliveryStatus);
-        return {
-          ...order,
-          deliveryStatus: nextStatus
-        };
-      })
+    const nextStatus = nextDeliveryStatus(targetOrder.deliveryStatus);
+
+    setOrders((currentOrders) =>
+      currentOrders.map((order) =>
+        order.id === orderId
+          ? {
+              ...order,
+              deliveryStatus: nextStatus
+            }
+          : order
+      )
     );
+
+    if (nextStatus !== "entregado" || targetOrder.deliveryStatus === "entregado") {
+      return;
+    }
+
+    const deliveredAtLabel = new Date().toLocaleTimeString("es-UY", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    const confirmedMovement: Movement = {
+      id: `mv-${movementSequenceRef.current++}`,
+      label: `Venta pedido ${targetOrder.id}`,
+      amount: targetOrder.total,
+      createdAtLabel: deliveredAtLabel,
+      detail: buildMovementDetail(targetOrder.items),
+      orderId: targetOrder.id
+    };
+
+    setMovements((currentMovements) => {
+      if (currentMovements.some((movement) => movement.orderId === confirmedMovement.orderId)) {
+        return currentMovements;
+      }
+
+      return [confirmedMovement, ...currentMovements];
+    });
   }
 
   return {

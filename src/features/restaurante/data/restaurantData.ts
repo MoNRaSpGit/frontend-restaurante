@@ -102,27 +102,11 @@ export const initialOrders: Order[] = [
 
 export const initialMovements: Movement[] = [
   {
-    id: "mv-1",
-    label: "Venta pedido P-102",
-    amount: 760,
-    createdAtLabel: "12:11",
-    detail: "Milanesa napolitana x1, Agua con gas x1",
-    orderId: "P-102"
-  },
-  {
     id: "mv-2",
     label: "Compra de insumos",
     amount: -500,
     createdAtLabel: "11:40",
     detail: "Gaseosas y pan rallado"
-  },
-  {
-    id: "mv-3",
-    label: "Venta pedido P-101",
-    amount: 980,
-    createdAtLabel: "12:08",
-    detail: "Hamburguesa clasica x2, Refresco 600 ml x1",
-    orderId: "P-101"
   }
 ];
 
