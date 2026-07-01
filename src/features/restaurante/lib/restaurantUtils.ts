@@ -18,12 +18,12 @@ export function formatCurrency(value: number) {
   }).format(value);
 }
 
-export function nextKitchenStatus(currentStatus: KitchenStatus) {
-  if (currentStatus === "pendiente") {
-    return "preparacion";
+export function nextKitchenStatus(currentStatus: KitchenStatus): KitchenStatus {
+  if (currentStatus === "lista") {
+    return "pendiente";
   }
 
-  if (currentStatus === "preparacion") {
+  if (currentStatus === "pendiente" || currentStatus === "preparacion") {
     return "lista";
   }
 
@@ -57,26 +57,26 @@ export function findCustomerByTerm(customers: Customer[], term: string) {
 }
 
 export function buildMovementDetail(items: DraftOrderItem[]) {
-  return items.map((item) => `${item.name} x${item.quantity}`).join(", ");
+  return items.map((item) => `${item.name} x${item.quantity}`).join("\n");
 }
 
 export function resolveKitchenByCategory(category: MenuCategoryKey): KitchenKey {
-  if (category === "hamburguesas") {
-    return "carrito";
-  }
-
   if (category === "milanesas") {
     return "cocina";
   }
 
-  return "mostrador";
+  if (category === "bebidas") {
+    return "mostrador";
+  }
+
+  return "cocina";
 }
 
 export function groupOrdersByKitchen(orders: Order[], kitchen: KitchenKey): KitchenOrderGroup[] {
   return orders
     .map((order) => ({
       order,
-      items: order.items.filter((item) => item.kitchen === kitchen && item.status !== "lista")
+      items: order.items.filter((item) => item.kitchen === kitchen && !item.dismissedAtKitchen)
     }))
     .filter((entry) => entry.items.length > 0);
 }

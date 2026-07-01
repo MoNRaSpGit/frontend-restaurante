@@ -46,7 +46,8 @@ Hoy incluye:
 - vistas separadas para `Deli Juan` y `Deli Maria`
 - tarjetas de delivery con numero de pedido, cliente, direccion y productos del pedido
 - `Movimientos` confirma la venta cuando el deli marca el pedido como entregado
-- listas de `Cocina` y `Carrito` que ocultan productos cuando quedan listos
+- listas de `Cocina` y `Carrito` que separan productos `entrando` y `prontos`
+- los productos `listos` pueden tocarse desde `Pedidos prontos` para volver a `Pendiente`
 - movimientos con resumen de venta diaria y ganancia estimada
 - configuracion lista para deploy en GitHub Pages
 - soporte `PWA` instalable

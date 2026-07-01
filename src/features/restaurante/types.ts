@@ -1,5 +1,5 @@
-export type ViewKey = "jefe" | "cocina-afuera" | "cocina-adentro" | "repartidor-a" | "repartidor-b";
-export type KitchenKey = "carrito" | "cocina" | "mostrador";
+export type ViewKey = "jefe" | "cocina" | "delivery";
+export type KitchenKey = "cocina" | "mostrador";
 export type MenuCategoryKey = "hamburguesas" | "milanesas" | "bebidas";
 export type KitchenStatus = "pendiente" | "preparacion" | "lista";
 export type DeliveryStatus = "sin-asignar" | "asignado" | "en-camino" | "entregado";
@@ -29,6 +29,7 @@ export type DraftOrderItem = {
 };
 
 export type OrderKitchenItem = DraftOrderItem & {
+  dismissedAtKitchen?: boolean;
   status: KitchenStatus;
 };
 

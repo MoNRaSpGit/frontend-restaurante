@@ -2,6 +2,21 @@
 
 Fecha de actualizacion: 2026-05-30
 
+## 2026-06-01 - Cocina permite volver productos listos a pendiente
+
+Se ajusta la vista operativa de `Cocina` para poder deshacer un producto marcado como listo.
+
+Incluye:
+
+- los items dentro de `Pedidos prontos` vuelven a `Pendiente` al hacer click
+- al volver un item, reaparece en `Comandas entrando`
+- si el pedido habia quedado autoasignado solo por estar completamente listo, esa asignacion se revierte
+
+Objetivo:
+
+- corregir rapido errores de toque en cocina
+- evitar que un pedido quede marcado como listo o asignado si todavia le falta elaboracion
+
 ## 2026-05-30 - Movimientos confirma ventas al entregar
 
 Se ajusta la logica del simulador para que la venta no se registre al crear el pedido.

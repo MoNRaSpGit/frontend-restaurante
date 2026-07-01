@@ -89,17 +89,15 @@ export function useRestaurantOperations() {
 
   const kitchenViews = useMemo(
     () => ({
-      cartOrders: groupOrdersByKitchen(orders.filter((order) => order.deliveryStatus !== "entregado"), "carrito"),
-      kitchenOrders: groupOrdersByKitchen(orders.filter((order) => order.deliveryStatus !== "entregado"), "cocina"),
-      counterOrders: groupOrdersByKitchen(orders.filter((order) => order.deliveryStatus !== "entregado"), "mostrador")
+      kitchenOrders: groupOrdersByKitchen(orders, "cocina"),
+      counterOrders: groupOrdersByKitchen(orders, "mostrador")
     }),
     [orders]
   );
 
   const riderViews = useMemo(
     () => ({
-      riderAOrders: orders.filter((order) => order.riderId === "r1" && order.deliveryStatus !== "entregado"),
-      riderBOrders: orders.filter((order) => order.riderId === "r2" && order.deliveryStatus !== "entregado")
+      deliveryOrders: orders.filter((order) => order.riderId === "r1")
     }),
     [orders]
   );
@@ -138,7 +136,7 @@ export function useRestaurantOperations() {
     setNewCustomerAddress(customer.address);
   }
 
-  function createQuickCustomer(name: string, phone: string) {
+  function createQuickCustomer(name: string, address: string) {
     const normalizedName = name.trim();
     if (!normalizedName) {
       return null;
@@ -147,8 +145,8 @@ export function useRestaurantOperations() {
     const customer: Customer = {
       id: `c${customerSequenceRef.current++}`,
       name: normalizedName,
-      phone: phone.trim(),
-      address: ""
+      phone: "",
+      address: address.trim()
     };
 
     setCustomers((currentCustomers) => [...currentCustomers, customer]);
@@ -270,11 +268,53 @@ export function useRestaurantOperations() {
       total
     };
 
+    const movement: Movement = {
+      id: `mv-${movementSequenceRef.current++}`,
+      label: `Venta pedido ${orderId}`,
+      amount: total,
+      createdAtLabel,
+      detail: buildMovementDetail(draftItems),
+      orderId
+    };
+
     setOrders((currentOrders) => [order, ...currentOrders]);
+    setMovements((currentMovements) => [movement, ...currentMovements]);
     resetDraft();
   }
 
   function advanceKitchenItem(orderId: string, itemId: string) {
+    setOrders((currentOrders) =>
+      currentOrders.map((order) => {
+        if (order.id !== orderId) {
+          return order;
+        }
+
+        const updatedItems = order.items.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                status: nextKitchenStatus(item.status)
+              }
+            : item
+        );
+        const orderIsReady = updatedItems.every((item) => item.status === "lista");
+        const shouldResetDeliveryAssignment = !orderIsReady && order.deliveryStatus === "asignado";
+
+        return {
+          ...order,
+          items: updatedItems,
+          riderId: shouldResetDeliveryAssignment ? null : orderIsReady ? order.riderId ?? "r1" : order.riderId,
+          deliveryStatus: shouldResetDeliveryAssignment
+            ? "sin-asignar"
+            : orderIsReady && order.deliveryStatus === "sin-asignar"
+              ? "asignado"
+              : order.deliveryStatus
+        };
+      })
+    );
+  }
+
+  function dismissKitchenItem(orderId: string, itemId: string) {
     setOrders((currentOrders) =>
       currentOrders.map((order) => {
         if (order.id !== orderId) {
@@ -287,7 +327,7 @@ export function useRestaurantOperations() {
             item.id === itemId
               ? {
                   ...item,
-                  status: nextKitchenStatus(item.status)
+                  dismissedAtKitchen: true
                 }
               : item
           )
@@ -328,32 +368,6 @@ export function useRestaurantOperations() {
           : order
       )
     );
-
-    if (nextStatus !== "entregado" || targetOrder.deliveryStatus === "entregado") {
-      return;
-    }
-
-    const deliveredAtLabel = new Date().toLocaleTimeString("es-UY", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-
-    const confirmedMovement: Movement = {
-      id: `mv-${movementSequenceRef.current++}`,
-      label: `Venta pedido ${targetOrder.id}`,
-      amount: targetOrder.total,
-      createdAtLabel: deliveredAtLabel,
-      detail: buildMovementDetail(targetOrder.items),
-      orderId: targetOrder.id
-    };
-
-    setMovements((currentMovements) => {
-      if (currentMovements.some((movement) => movement.orderId === confirmedMovement.orderId)) {
-        return currentMovements;
-      }
-
-      return [confirmedMovement, ...currentMovements];
-    });
   }
 
   return {
@@ -385,6 +399,7 @@ export function useRestaurantOperations() {
     changeDraftQuantity,
     submitOrder,
     advanceKitchenItem,
+    dismissKitchenItem,
     assignRider,
     advanceRiderOrder
   };

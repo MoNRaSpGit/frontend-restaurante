@@ -28,12 +28,12 @@ export function RestaurantLandingPage() {
             onChangeDraftQuantity={operations.changeDraftQuantity}
             onResetDraft={operations.resetDraft}
             onSubmitOrder={operations.submitOrder}
-            cartOrders={operations.kitchenViews.cartOrders}
             kitchenOrders={operations.kitchenViews.kitchenOrders}
             orders={operations.orders}
             riders={operations.riders}
             onAssignRider={operations.assignRider}
             onAdvanceKitchenItem={operations.advanceKitchenItem}
+            onDismissKitchenItem={operations.dismissKitchenItem}
             onAdvanceRiderOrder={operations.advanceRiderOrder}
             movements={operations.movements}
             expandedMovementId={operations.expandedMovementId}
@@ -43,30 +43,18 @@ export function RestaurantLandingPage() {
           />
         ) : null}
 
-        {operations.activeView === "cocina-afuera" ? (
-          <KitchenView
-            title="Carrito"
-            subtitle="Preparaciones rapidas"
-            orders={operations.kitchenViews.cartOrders}
-            onAdvanceItem={operations.advanceKitchenItem}
-          />
-        ) : null}
-
-        {operations.activeView === "cocina-adentro" ? (
+        {operations.activeView === "cocina" ? (
           <KitchenView
             title="Cocina"
-            subtitle="Preparaciones de cocina"
+            subtitle="Todas las preparaciones del local"
             orders={operations.kitchenViews.kitchenOrders}
             onAdvanceItem={operations.advanceKitchenItem}
+            onDismissItem={operations.dismissKitchenItem}
           />
         ) : null}
 
-        {operations.activeView === "repartidor-a" ? (
-          <RiderView rider={operations.riders[0]} orders={operations.riderViews.riderAOrders} onAdvanceOrder={operations.advanceRiderOrder} />
-        ) : null}
-
-        {operations.activeView === "repartidor-b" ? (
-          <RiderView rider={operations.riders[1]} orders={operations.riderViews.riderBOrders} onAdvanceOrder={operations.advanceRiderOrder} />
+        {operations.activeView === "delivery" ? (
+          <RiderView rider={operations.riders[0]} orders={operations.riderViews.deliveryOrders} onAdvanceOrder={operations.advanceRiderOrder} />
         ) : null}
       </section>
     </main>
